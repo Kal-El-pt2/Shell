@@ -55,11 +55,20 @@ int main()
           input.erase(0,input.find(" ")+1);
           if(isValid(input) != invalid){
             std::string path = std::getenv("PATH");
-            
-            std::cout<<input<<" is "<<path<<"\n";
+            std::stringstream ss(path);
+            std::string ans="";
+            while(!ss.eof()){
+              std::getline(ss,ans,':');
+              std::string abs_path=path+'/' + input;
+              if(std::filesystem::exists(abs_path)){
+                std::cout<<input<<abs_path<<"\n";
+              }else{
+                std::cout<<input<<"\n";
+              }
+            }
           }
           else{
-            std::cout<<input<<" not found\n";
+            std::cout<<input<<"\n";
           }
           break;
       default:

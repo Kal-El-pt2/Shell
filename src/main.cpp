@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include<sstream>
+#include<filesystem>
 
 enum validCommands
 {
@@ -52,7 +54,9 @@ int main()
       case type:
           input.erase(0,input.find(" ")+1);
           if(isValid(input) != invalid){
-            std::cout<<input<<" is a shell builtin\n";
+            std::string path = std::getenv("PATH");
+            
+            std::cout<<input<<" is "<<path<<"\n";
           }
           else{
             std::cout<<input<<" not found\n";

@@ -85,7 +85,7 @@ int main()
 
         if (path.empty())
         {
-          std::cout << input << " not found\n";
+          std::cout << input << ": not found\n";
         }
         else
         {

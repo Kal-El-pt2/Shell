@@ -81,7 +81,6 @@ int main()
       }
       else
       {
-        std::cout << input << "\n";
         std::string path = get_path(input);
 
         if (path.empty())

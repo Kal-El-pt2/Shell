@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <filesystem>
+#include <vector>
 
 enum validCommands
 {
@@ -9,8 +10,23 @@ enum validCommands
   cd,
   exit0,
   type,
+  Builtin,
+  Executable,
   invalid,
 };
+
+
+struct FullCommandType
+{
+  validCommands type;
+  std::string executable_path;
+};
+
+std::vector<std::string> parse_command_to_string_vector(std::string command);
+FullCommandType command_to_full_command_type(std::string command);
+std::string find_command_executable_path(std::string command);
+std::string find_command_in_path(std::string command, std::string path);
+
 
 std::string get_path(std::string command)
 {
@@ -61,6 +77,15 @@ int main()
     std::string input;
     std::getline(std::cin, input);
 
+    std::vector<std::string> command_vector = parse_command_to_string_vector(input);
+    if (command_vector.size() == 0)
+    {
+      continue;
+    }
+    FullCommandType fct = command_to_full_command_type(command_vector[0]);
+    std::string command_name = command_vector[1];
+    FullCommandType command_type = command_to_full_command_type(command_name);
+
     switch (isValid(input))
     {
     case cd:
@@ -92,13 +117,30 @@ int main()
           std::cout << input << " is " << path << "\n";
         }
       }
-    
-    break;
-  default:
-    std::cout << input << ": command not found\n";
-    break;
-  }
-}
-return 0;
-}
 
+      break;
+      case Builtin:
+          std::cout << input << " is a shell builtin\n";
+          break;
+        case Executable:
+          std::cout << input << " is " << command_type.executable_path << "\n";
+          break;
+    default:
+      std::cout << input << ": command not found\n";
+      break;
+    }
+    if (fct.type == Executable)
+    {
+      std::string command_with_full_path = fct.executable_path;
+      for (int argn = 1; argn < command_vector.size(); argn++)
+      {
+        command_with_full_path += " ";
+        command_with_full_path += command_vector[argn];
+      }
+      const char *command_ptr = command_with_full_path.c_str();
+      system(command_ptr);
+      continue;
+    }
+  }
+  return 0;
+}
